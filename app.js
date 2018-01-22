@@ -1,10 +1,35 @@
 var express = require("express");
 var app = express();    //gives an application instance
 var morgan = require("morgan");
+var nunjucks = require("nunjucks");
 
-var logger = morgan("dev");
+var locals = {
+  title: "Some Title",
+  people: [
+    {name: 'Gandalf'},
+    {name: 'Hermione'}
+  ]
+};
 
-app.use(logger); //shortened version
+//what about "app.set("views", __dirname + '/views')" ? Does this only apply to
+//swig? Does nunjucks.configure("views", {noCache: true}) already give us where to find
+//the files?
+
+nunjucks.configure("views", {noCache: true}); //cache is turned off or on depending on if we're in development
+nunjucks.render("index.html", locals, function (err, output) {
+  if (err) {
+    return console.log(err);
+  }
+
+  console.log(output);
+});
+
+
+
+app.use(morgan('dev')); //shortened version
+
+app.set("view engine", "html");
+app.engine("html", nunjucks.render);//how to render html templates via nunjucks
 
 //function below gets the logger info manually
 
@@ -17,7 +42,7 @@ app.use(logger); //shortened version
 // })
 
 app.get('/', function(req, res) {
-  res.send("you got the root route\n");
+  res.render("index", locals);
 })
 //
 app.get('/news', function (req, res) {
