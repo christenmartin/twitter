@@ -6,7 +6,7 @@ var routes = require("./routes"); //importing modularized routes
 var fs = require("fs");
 var path = require("path");
 var mime = require("mime");
-
+var bodyParser = require("body-parser");
 // var locals = {
 //   title: "Some Title",
 //   people: [
@@ -32,8 +32,10 @@ app.engine("html", nunjucks.render);//how to render html templates via nunjucks
 
 
 app.use(morgan('dev')); //shortened version
+app.use(bodyParser.urlencoded( { extended: true})); // for HTML form submits
+app.use(bodyParser.json()); //would be for AJAX requests 
 
-//the typical way to use static middleware: 
+//the typical way to use static middleware:
 app.use(express.static(__dirname + "/public"));
 
 
